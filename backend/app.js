@@ -7,6 +7,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -17,4 +19,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-module.exports = app;
+
+io.on('connection', function (socket) {
+ console.log('user connected');
+
+ socket.emit('message', function () {
+  console.log('welcome to the chat');
+ })
+
+})
+
+
+module.exports = { app: app, server: server };
